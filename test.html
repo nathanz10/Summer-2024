@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        #hangman-container {
+            margin-top: 50px;
+        }
+        #word-container {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #input-container {
+            margin-bottom: 20px;
+        }
+        #input-letter {
+            width: 30px;
+            text-align: center;
+        }
+        #play-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <div id="hangman-container">
+        <div id="word-container"></div>
+        <div id="input-container">
+            <input type="text" id="input-letter" maxlength="1" autocomplete="off">
+            <button id="play-button">Play</button>
+        </div>
+    </div>
+    <script>
+        // Hangman game logic
+        const words = ['javascript', 'python', 'hangman', 'programming', 'computer'];
+        let selectedWord = '';
+        let guessedLetters = [];
+        let remainingAttempts = 6;
+
+        function initializeGame() {
+            selectedWord = words[Math.floor(Math.random() * words.length)];
+            guessedLetters = [];
+            remainingAttempts = 6;
+            updateWordDisplay();
+        }
+
+        function updateWordDisplay() {
+            const wordContainer = document.getElementById('word-container');
+            let displayWord = '';
+            for (const letter of selectedWord) {
+                if (guessedLetters.includes(letter)) {
+                    displayWord += letter + ' ';
+                } else {
+                    displayWord += '_ ';
+                }
+            }
+            wordContainer.textContent = displayWord;
+        }
+
+        function checkWin() {
+            for (const letter of selectedWord) {
+                if (!guessedLetters.includes(letter)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function guessLetter(letter) {
+            guessedLetters.push(letter);
+            updateWordDisplay();
+            if (!selectedWord.includes(letter)) {
+                remainingAttempts--;
+            }
+            if (remainingAttempts === 0) {
+                alert('Game Over! The word was: ' + selectedWord);
+                initializeGame();
+            } else if (checkWin()) {
+                alert('Congratulations! You guessed the word: ' + selectedWord);
+                initializeGame();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('play-button').addEventListener('click', () => {
+            const inputLetter = document.getElementById('input-letter').value.toLowerCase();
+            if (inputLetter.length === 1 && inputLetter.match(/[a-z]/)) {
+                if (!guessedLetters.includes(inputLetter)) {
+                    guessLetter(inputLetter);
+                } else {
+                    alert('You already guessed that letter.');
+                }
+            } else {
+                alert('Please enter a valid single letter.');
+            }
+            document.getElementById('input-letter').value = '';
+        });
+
+        // Initialize game
+        initializeGame();
+    </script>
+</body>
+</html>
